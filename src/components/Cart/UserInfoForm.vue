@@ -21,20 +21,10 @@
       :value="user.email"
       @input="setUserInfo"
     />
-    <div class="datepicker">
-      <label for="date">取貨日期 : </label>
-      <el-date-picker
-        v-model="user.date"
-        type="date"
-        placeholder="取貨日期"
-        id="date"
-        class="picker"
-        @change="getDatePicker"
-      />
-    </div>
+  
     <div class="delivery">
       <label>{{ t("product delivery") }}</label>
-      <label for="takeOut">
+      <label for="takeOut" v-if=" storeInfo.shippingMethods.find(s=>s==='0')">
         {{ t("in-store pickup") }}
         <input
           type="radio"
@@ -44,7 +34,7 @@
           v-model="delivery"
         />
       </label>
-      <label for="delivery">
+      <label for="delivery"  v-if=" storeInfo.shippingMethods.find(s=>s==='1')">
         {{ t("home delivery") }}
         <input
           type="radio"
@@ -72,6 +62,33 @@ export default {
       return store.getters["order/userInfo"];
     });
 
+    const storeInfo=computed(()=>{
+    let info=localStorage.getItem('storeInfo')
+    if(info){
+      info=JSON.parse(info)
+      return info
+    }else{
+      return null
+    }
+    })
+
+    init()
+    function init(){
+      const takeOutState=storeInfo.value.shippingMethods.find(s=>s==='0')
+      const postState=storeInfo.value.shippingMethods.find(s=>s==='1')
+      if(takeOutState&&!postState){
+        delivery.value='takeOut'
+      }
+       if(!takeOutState&&postState){
+        delivery.value='delivery'
+      }
+      if(takeOutState&&postState){
+        delivery.value='takeOut'
+      }
+      setDeliveryState()
+    }
+
+
     if (props.userInfo) {
       for (const key in props.userInfo) {
         user.value[key] = props.userInfo[key];
@@ -85,16 +102,6 @@ export default {
     function setUserInfo(e) {
       const { name, value } = e.target;
       store.commit("order/setUserInfo", { type: name, value: value });
-    }
-
-    function getDatePicker(value){
-      const now=new Date()
-      let pickDay=new Date(value)
-      if(pickDay.getTime()<now.getTime()){
-        pickDay=new Date()
-      }
-      pickDay=pickDay.toLocaleDateString()
-      store.commit("order/setUserInfo", { type: 'date', value: pickDay });
     }
 
     function setDeliveryState() {
@@ -111,8 +118,8 @@ export default {
       t,
       delivery,
       setDeliveryState,
+      storeInfo,
       setUserInfo,
-      getDatePicker,
       user,
     };
   },
@@ -151,12 +158,6 @@ form {
     }
   }
 
-  .datepicker{
-    margin-bottom: 1em;
-    label{
-      font-size: var(--f-mi);
-      margin: .5em 0;
-    }
-  }
+ 
 }
 </style>

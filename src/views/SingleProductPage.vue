@@ -65,7 +65,7 @@
         <span v-html="product.customHTML"></span>
       </div>
       <div class="textarea">
-        <textarea v-model="description" rows="5" cols="33"></textarea>
+        <textarea v-model="description" rows="5" cols="33" :placeholder="t('comments')"></textarea>
       </div>
     </div>
     <CartBtn />

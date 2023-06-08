@@ -19,7 +19,6 @@ export default {
         areaCode: "",
         addr: "",
         note: "",
-        date:"",
         signed: false,
       },
       recipientInfo: {
@@ -103,7 +102,7 @@ export default {
       const { userInfo, recipientInfo, delivery } = context.state;
       const storeInfo = JSON.parse(localStorage.getItem("storeInfo"));
       const shopCart = JSON.parse(localStorage.getItem("shopCart"));
-      let { name, email, phone,date } = userInfo;
+      let { name, email, phone } = userInfo;
     
       if (
         !name ||
@@ -183,10 +182,7 @@ export default {
         i.totalPrice = i.price;
         delete i.tempId;
       });
-      if(!date){
-        date=new Date().toLocaleDateString()
-      }
-      data.countAmountItems[0].description=`取貨日期:${date}; ${data.countAmountItems[0].description}`
+   
       return await axios.post(postCreateOrderRoute, data);
     },
     async getQueryOrder(context, payload) {

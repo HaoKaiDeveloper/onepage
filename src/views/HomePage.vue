@@ -10,7 +10,7 @@
         <h1>
           {{ activeLanguage !== "tw" ? tr(storeInfo.name) : storeInfo.name }}
         </h1>
-        <p>{{ t("business hours") }} : {{ storeInfo.time }}</p>
+        <p v-if="storeInfo.time">{{ t("business hours") }} : {{ storeInfo.time }}</p>
         <p v-if="storeInfo.phone.length > 4">
           {{ t("store tel") }} : {{ storeInfo.phone }}
         </p>
@@ -24,9 +24,9 @@
 
       <div class="language_tab">
         <LangBtn lang="tw" />
-        <LangBtn lang="en" />
-        <LangBtn lang="japan" />
-        <LangBtn lang="korean" />
+        <LangBtn lang="en" v-if="langObj.englishName"/>
+        <LangBtn lang="japan" v-if="langObj.japaneseName"/>
+        <LangBtn lang="korean" v-if="langObj.koreanName"/>
       </div>
 
       <div class="product_list">
@@ -74,6 +74,25 @@ export default {
       return store.getters["shop/lang"];
     });
 
+    const langObj=computed(()=>{
+      const obj={name:false,englishName:false,japaneseName:false,koreanName:false};
+      storeProducts.value.forEach(p=>{
+            if(p.name){
+              obj.name=true
+            }
+            if(p.englishName){
+              obj.englishName=true
+            }
+            if(p.japaneseName){
+              obj.japaneseName=true
+            }
+            if(p.koreanName){
+              obj.koreanName=true
+            }
+          })
+        return obj  
+    })
+
     init();
     async function init() {
       locale.value = activeLanguage.value;
@@ -87,8 +106,8 @@ export default {
           store.dispatch("shop/getproducts", {
             account: queryAcc,
           }),
-          console.log(storeInfo.value)
         ]);
+       
       } catch (err) {
         console.log(err);
       }
@@ -102,6 +121,7 @@ export default {
       activeLanguage,
       storeProducts,
       storeInfo,
+      langObj,
       t,
       tr,
       locale,
@@ -122,20 +142,24 @@ section {
 .img-box {
   width: 100%;
   max-width: 1500px;
-  height: 300px;
-  background-color: var(--orange-1);
+  height: 100%;
+  // min-height: 200px;
+  // max-height:500px;
+  background-color: #fff;
   position: relative;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit:fill;
+    max-height:400px;
+    min-height: 300px;
+    object-fit:cover;
   }
 
   .radius-box {
-    width: 100%;
-    height: 5em;
-    border-radius: 30px;
+    width: 101%;
+    height: 4.5em;
+    border-radius: 30px 30px 0 0;
     background-color: var(--back-color);
     position: absolute;
     bottom: -2.5em;
@@ -210,6 +234,7 @@ article {
   margin: 0 auto;
   margin-bottom: 4em;
   color: var(--grey-4);
+  font-size: var(--f-s);
   h1{
     font-size: var(--f-l);
   }
