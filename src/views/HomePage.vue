@@ -220,13 +220,15 @@ article {
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 20em;
   gap: 2em;
+  
 
   @media screen and (max-width: 900px) {
     grid-template-columns: 1fr;
   }
   @media screen and (max-width: 500px) {
-    gap: 3em;
     grid-auto-rows: 30vw;
+    gap: 5em;
+    margin-bottom: 4rem;
   }
 }
 .storeIntro{

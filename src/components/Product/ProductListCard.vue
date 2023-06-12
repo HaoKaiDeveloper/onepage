@@ -49,7 +49,7 @@ export default {
 <style scoped lang="scss">
 .product_card {
   width: 100%;
-  max-width: 50em;
+  // max-width: 50em;
   min-width: 40em;
   max-height: 20em;
   min-height: 10em;
@@ -69,12 +69,12 @@ export default {
   }
   p {
     font-size: var(--f-s);
-    text-align: right;
+    text-align: left;
   }
   .plus_btn {
     position: absolute;
     right: 1em;
-    bottom: 1em;
+    bottom: 0;
     background-color: var(--orange-1);
     font-size: 15px;
     padding: 0.4em;
@@ -87,6 +87,7 @@ export default {
   @media screen and (max-width: 500px) {
     min-width: 100%;
     gap: 0.2em;
+    align-items: center;
     .img {
       width: 30%;
       min-width: 11.5em;
@@ -99,6 +100,11 @@ export default {
     }
     div {
       flex: 1;
+    }
+    h1{
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: .5em;
     }
     h1,
     p {

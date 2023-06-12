@@ -16,7 +16,7 @@
         />
       </div>
 
-      <div class="info">
+       <div class="info">
         <ProductPrice
           v-if="product.imgList.length > 0"
           :p="product"
@@ -58,15 +58,17 @@
         >
           {{ t("add to cart") }}
         </button>
-      </div>
+      </div> 
 
       <div class="text">
         <h3>{{ t("product information") }}</h3>
-        <span v-html="product.customHTML"></span>
+        <div v-html="customHTML" class="pro_text"></div>
       </div>
+
       <div class="textarea">
         <textarea v-model="description" rows="5" cols="33" :placeholder="t('comments')"></textarea>
       </div>
+
     </div>
     <CartBtn />
   </section>
@@ -108,6 +110,18 @@ export default {
       }
     });
 
+    const customHTML = computed(() => {
+      if (product.value.customHTML) {
+        const htmlString = product.value.customHTML
+        var modifiedHtmlString = htmlString.replace(/(style\s*=\s*['"])([^'"]*)(['"])/g, function (match, p1, p2, p3) {
+          var styleValue = p2.replace(/margin\s*:\s*[^;]+;/g, '') // 移除margin样式
+            .replace(/text-align\s*:\s*[^;]+;/g, 'text-align: left;'); // 设置text-align为left
+          return p1 + styleValue.trim() + p3;
+        });
+        return modifiedHtmlString
+      }
+    })
+
     init();
     async function init() {
       let storeAcc = localStorage.getItem("storeInfo");
@@ -118,8 +132,7 @@ export default {
           productId: route.params.id,
         });
         product.value = getproductsRes;
-        activeSpecificProduct.value = getproductsRes.productSpecifications[0];
-        // console.log(product.value);
+        setActiveProduct(product.value.productSpecifications[0])
       } catch (err) {
         console.log(err);
       }
@@ -150,6 +163,7 @@ export default {
 
     return {
       product,
+      customHTML,
       productLang,
       storeInfo,
       quantity,
@@ -259,11 +273,19 @@ section {
 }
 
 .text {
-  grid-column: 2/4;
+  grid-column:2/4;
   grid-row: 2/3;
-  font-size: var(--f-mi);
+  text-align: left;
+  word-break: break-all;
+  padding: 1em;
   h3 {
     font-size: var(--f-l);
+  }
+  .pro_text{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    text-align: left;
   }
 }
 
